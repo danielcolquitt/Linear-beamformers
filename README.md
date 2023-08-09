@@ -17,3 +17,7 @@ Does the beamforming --- computes the steering vector for a given bearing; assum
 ## DoA.m
 
 Computes the SPL of the beamformed field and estimates the DoA based on the means of the two bearings with the highest SPLs.
+
+## To do
+
+- Add noise
