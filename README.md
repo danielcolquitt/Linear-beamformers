@@ -12,7 +12,7 @@ Simulates a plane wave propagating to/from infinity.
 
 ## linear_beamformer.m
 
-Does the beamforming --- computes the steering vector for a given bearing; assumes incident plane wave.
+Does the beamforming (DAS) --- computes the steering vector for a given bearing; assumes incident plane wave.
 
 ## DoA.m
 
@@ -20,4 +20,5 @@ Computes the SPL of the beamformed field and estimates the DoA based on the mean
 
 ## To do
 
+- Code up MV beamformer
 - Add noise
