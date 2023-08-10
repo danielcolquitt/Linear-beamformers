@@ -10,9 +10,9 @@ The top-level scripts to run and specify the properties of the sources and beamf
 
 Simulates a plane wave propagating to/from infinity.
 
-## linear_beamformer.m
+## DAS_beamformer.m
 
-Does the beamforming (DAS) --- computes the steering vector for a given bearing; assumes incident plane wave.
+Applied conventional delay-and-sum (DAS) beamerformer --- computes the steering vector for a given bearing; assumes incident plane wave.
 
 ## DoA.m
 

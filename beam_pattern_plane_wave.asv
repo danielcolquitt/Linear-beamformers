@@ -1,14 +1,7 @@
 clear
 
-% Visualisation parameters
-nf = -40;                               % Noise floor
-                                        % (range of beam pattern response)
-dr = 20;                                % Spatial domain to plot
-                                        % (no effect on computation)
-sr = 1000;                               % Spatial resolution for plotting
-                                        % (no effect on computation)
-ar = 1e3;                               % Scanning angle resolution
-                                        % (AFFECTS DoA estimation)
+% Set the noise floor (range of beam pattern response)
+noise_floor = -40;
 
 % Plane wave source characteristics
 a  = 1;                                 % amplitude [m]
@@ -21,14 +14,13 @@ N = 36;     % Number of hydrophones
 
 
 % Compute ancillary quantities
-l = c/f;                                % wavelength
-k = 2.*pi.* ...
-    [ cos( th ) ; sin( th ) ]./l;       % wave vector
-d = l/2;                                % Array separation - must be <= l/2
+l = c/f;                           % wavelength
+k = [ cos( th ) ; sin( th ) ]./l;  % wave vector
+d = l/4;                           % Array separation - must be <= l/2
 
 
 % Calculate hyrdophone positions
-Y = ( -ceil( N.*d./2 ):d:ceil( N.*d./2 ) ).';
+Y = ( -ceil( /2 ):l/4:ceil( L/2 ) ).';
 X = zeros( size( Y ) );
 
 % Signals at hydrophones
@@ -57,13 +49,13 @@ plot( [ source_bearing ; source_bearing ] , ...
     [ min( SPL ) ; max( SPL ) ] , 'LineWidth' , 2 );
 plot( [ theta ; theta ] , ...
     [ min( SPL ) ; max( SPL ) ] , 'Linewidth' , 2 , 'LineStyle' , '--' );
-axis( [ min( Th ) , max( Th ) , nf , 0 ] );
+axis( [ min( Th ) , max( Th ) , noise_floor , 0 ] );
 legend( 'Beamformed response' , 'Actual DoA' , 'Estimated DoA' , ...
     'Location' , 'southoutside' , 'Orientation','horizontal' )
 box on;
 
 figure; hold on;
-[ XX , YY ] = meshgrid( -ceil( dr ):2*ceil( dr )/sr:ceil( dr ) );
+[ XX , YY ] = meshgrid( -2*ceil( L/2 ):2*L/1000:ceil( L/2 )*2 );
 contourf( XX , YY , real( plane_wave( a , k , XX , YY ) ) , ...
     'LineColor' , 'none' );
 colormap sky;
