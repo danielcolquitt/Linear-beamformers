@@ -2,9 +2,9 @@
  
 A collection of MATLAB scripts and functions to simulate simple linear acoustic beamformers.
 
-## beam_pattern_*_wave.m
+## beam_pattern_wave.m
 
-The top-level scripts to run and specify the properties of the sources and beamformers.
+The top-level script to run and specify the properties of the sources and beamformers.
 
 ## plane_wave.m
 
@@ -12,13 +12,16 @@ Simulates a plane wave propagating to/from infinity.
 
 ## DAS_beamformer.m
 
-Applied conventional delay-and-sum (DAS) beamerformer --- computes the steering vector for a given bearing; assumes incident plane wave.
+Applies conventional delay-and-sum (DAS) beamerformer --- computes the steering vector for a given bearing; assumes incident plane wave.
+
+## MVDR_beamformer.m
+
+Applies Capon/MVDR beamformer --- computes spatial spectrum for Capon beamformer.
 
 ## DoA.m
 
-Computes the SPL of the beamformed field and estimates the DoA based on the means of the two bearings with the highest SPLs.
+Estimates the DoA based on the maximum field value. Does not work well for multiple DoAs.
 
 ## To do
 
-- Code up MV beamformer
-- Add noise
+- Incorporate temporal noise

@@ -15,9 +15,9 @@ est_DoA = false;                        % Estimate DoA from max of metric
 
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
-a  = [ 1 , 1 , 0.1 ];                   % Vector of wave amplitudes [m]
-f  = [ 0.01e6 , 0.02e6 , 0.03e6 ];      % Vector of frequencies [Hz]
-th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
+a  = [ 1 , 1 ];                   % Vector of wave amplitudes [m]
+f  = [ 0.03e6 , 0.01e6 ];      % Vector of frequencies [Hz]
+th = [ -30 , 30 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
 
 % Array characteristics
@@ -25,7 +25,7 @@ sample_r = 1e6;                         % Sampling rate
 sample_N = 1e4;                         % Sampling window
 noise_a  = 0.04;                        % Amplitude of AWGN
 N        = 8;                           % Number of sensors
-target_f = 0.02e6;                   % Target frequency
+target_f = 0.03e6;                      % Target frequency
 
 % Compute ancillary quantities
 target_l = c./target_f;                 % wavelength
@@ -36,8 +36,7 @@ t = ( 0:(sample_N-1) )./sample_r;       % Time vector
 signal = @(x,y) ( 0 );
 for nw = 1:length( a )
     signal = @(x,y) ( signal( x , y ) ...
-        + plane_wave( a( nw ) , th( nw ) , ...
-        f( nw ) , f( nw )  , x , y , t ) );
+        + plane_wave( a( nw ) , th( nw ) , f( nw ) , c , x , y , t ) );
 end
 
 % Calculate hyrdophone positions
