@@ -1,3 +1,2 @@
 # Ignore MATLAB autosave files
 *.asv
-MVDR_beamformer.m

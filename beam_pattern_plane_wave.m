@@ -9,10 +9,12 @@ sr = 1e3;                               % Spatial resolution for plotting
                                         % (no effect on computation)
 ar = 1e3;                               % Scanning angle resolution
                                         % (AFFECTS DoA estimation)
-est_DoA = true;                         % Estimate DoA from max of metric
+est_DoA = false;                        % Estimate DoA from max of metric
+                                        % N.B. Does not work well for
+                                        % multiple sources
 
 % Plane wave source characteristics
-c  = 0.02e6;                                 % speed of sound [m/s]
+c  = 0.02e6;                            % speed of sound [m/s]
 a  = [ 1 , 1 , 0.1 ];                   % Vector of wave amplitudes [m]
 f  = [ 0.01e6 , 0.02e6 , 0.03e6 ];      % Vector of frequencies [Hz]
 th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
@@ -21,12 +23,13 @@ th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
 % Array characteristics
 sample_r = 1e6;                         % Sampling rate
 sample_N = 1e4;                         % Sampling window
-noise_a = 0.4;                          % Amplitude of AWGN
-N = 8;                                  % Number of sensors
+noise_a  = 0.04;                        % Amplitude of AWGN
+N        = 8;                           % Number of sensors
+target_f = 0.02e6;                   % Target frequency
 
 % Compute ancillary quantities
-l = ones( size( f ) );                                % wavelength
-d = min( l/2 );                         % Array separation - must be <= l/2
+target_l = c./target_f;                 % wavelength
+d = target_l/2;                         % Array separation - must be <= l/2
 t = ( 0:(sample_N-1) )./sample_r;       % Time vector 
 
 % Annonymous function describing incoming signal
@@ -34,7 +37,7 @@ signal = @(x,y) ( 0 );
 for nw = 1:length( a )
     signal = @(x,y) ( signal( x , y ) ...
         + plane_wave( a( nw ) , th( nw ) , ...
-        f( nw ) , l( nw )  , x , y , t ) );
+        f( nw ) , f( nw )  , x , y , t ) );
 end
 
 % Calculate hyrdophone positions
@@ -47,14 +50,15 @@ S = signal( X , Y) + AWGN( noise_a , N , sample_N );
 % Azimuth
 Th = -pi:2*pi/ar:pi;
 
-fprintf( 'Wavelength: %g m\n' , l );
+fprintf( 'Target Wavelength: %g m\n' , target_l );
 fprintf( 'Array lattice spacing: %g m\n' , d );
 fprintf( 'Number of array elements: %g\n' , length( Y ) );
 fprintf( 'Number of bearing samples: %g\n' , length( Th ) );
 fprintf( 'Actual DoA: %g rad\n' , th);
 
 % Beamformer output
-B = DAS_beamformer( S , 2.*pi./min( l ) , [ X ; Y ] , Th );
+%B = DAS_beamformer( S , 2.*pi./target_l , [ X ; Y ] , Th );
+B = MVDR_beamformer( S , target_f , c , [ X ; Y ] , Th );
 
 if est_DoA == true
     % Compute SPL and DoA
@@ -86,14 +90,15 @@ ax = polaraxes; hold on;
 polarplot( Th , B , 'LineWidth' , 1);
 for thn = 1:length( th )
     polarplot( [ th( thn ) ; th( thn ) ] , ...
-        [ 0 ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
+        [ min( B ) ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
 end
 if est_DoA == true
     polarplot( [ theta ; theta ] , ...
-        [ 0 ; max( B ) ] , 'Linewidth' , 1 , ...
+        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
         'Color' , '#EDB120' , 'LineStyle' , '--' );
     polarplot( [ pi - theta ; pi - theta ] , ...
-        [ 0 ; max( B ) ] , 'Linewidth' , 1 , ...
+        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
         'Color' , '#EDB120' , 'LineStyle' , '--' );
 end
+rlim( [ min( B )  max( B ) ] )
 hold off;

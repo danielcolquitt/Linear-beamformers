@@ -21,7 +21,7 @@ for thn = 1:length( th )
 end
 
 
-B = log10( B )./log10( max( B ) );
+B = 10*log10( B./max( B ) );
 
 
 end
