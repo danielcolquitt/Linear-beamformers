@@ -1,73 +1,99 @@
 clear
 
 % Visualisation parameters
-nf = -40;                               % Noise floor
+nf = -30;                               % Noise floor
                                         % (range of beam pattern response)
 dr = 20;                                % Spatial domain to plot
                                         % (no effect on computation)
-sr = 1000;                               % Spatial resolution for plotting
+sr = 1e3;                               % Spatial resolution for plotting
                                         % (no effect on computation)
 ar = 1e3;                               % Scanning angle resolution
                                         % (AFFECTS DoA estimation)
+est_DoA = true;                         % Estimate DoA from max of metric
 
 % Plane wave source characteristics
-a  = 1;                                 % amplitude [m]
-f  = 1e3;                               % frequency [Hz]
-c  = 1.5e3;                             % speed of sound [m/s]
-th = pi/4;                              % Direction of arrival [rad]
+c  = 0.02e6;                                 % speed of sound [m/s]
+a  = [ 1 , 1 , 0.1 ];                   % Vector of wave amplitudes [m]
+f  = [ 0.01e6 , 0.02e6 , 0.03e6 ];      % Vector of frequencies [Hz]
+th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
+                                        % arrivals [rad]
 
-% Array parameters
-N = 36;     % Number of hydrophones
-
+% Array characteristics
+sample_r = 1e6;                         % Sampling rate
+sample_N = 1e4;                         % Sampling window
+noise_a = 0.4;                          % Amplitude of AWGN
+N = 8;                                  % Number of sensors
 
 % Compute ancillary quantities
-l = c/f;                                % wavelength
-k = 2.*pi.* ...
-    [ cos( th ) ; sin( th ) ]./l;       % wave vector
-d = l/2;                                % Array separation - must be <= l/2
+l = ones( size( f ) );                                % wavelength
+d = min( l/2 );                         % Array separation - must be <= l/2
+t = ( 0:(sample_N-1) )./sample_r;       % Time vector 
 
+% Annonymous function describing incoming signal
+signal = @(x,y) ( 0 );
+for nw = 1:length( a )
+    signal = @(x,y) ( signal( x , y ) ...
+        + plane_wave( a( nw ) , th( nw ) , ...
+        f( nw ) , l( nw )  , x , y , t ) );
+end
 
 % Calculate hyrdophone positions
-Y = ( -ceil( N.*d./2 ):d:ceil( N.*d./2 ) ).';
+Y = ( ( ( 0:( N-1 ) ) - ( N - 1)./2 ).*d );
 X = zeros( size( Y ) );
 
 % Signals at hydrophones
-S = plane_wave( a , k , X , Y);
+S = signal( X , Y) + AWGN( noise_a , N , sample_N );
 
 % Azimuth
-Th = -pi/2:pi/1000:pi/2;
+Th = -pi:2*pi/ar:pi;
 
 fprintf( 'Wavelength: %g m\n' , l );
-fprintf( 'Array lattice spacing: %g m\n' , l/4 );
+fprintf( 'Array lattice spacing: %g m\n' , d );
 fprintf( 'Number of array elements: %g\n' , length( Y ) );
 fprintf( 'Number of bearing samples: %g\n' , length( Th ) );
-fprintf( 'Actual DoA: %g rad\n' , atan2( k(2) , k(1) ) );
+fprintf( 'Actual DoA: %g rad\n' , th);
 
 % Beamformer output
-B = DAS_beamformer( S , norm( k ) , [ X , Y ] , Th );
+B = DAS_beamformer( S , 2.*pi./min( l ) , [ X ; Y ] , Th );
 
-% Compute SPL and DoA
-[ theta , SPL ] = DoA( B , Th );
+if est_DoA == true
+    % Compute SPL and DoA
+    theta = DoA( B , Th );
+end
 
+% Metric and DoA estimation
 figure; hold on;
-% Source bearing
-source_bearing = atan( k(2) / k(1) );
-plot( Th , SPL , 'LineWidth' , 1 );
-plot( [ source_bearing ; source_bearing ] , ...
-    [ min( SPL ) ; max( SPL ) ] , 'LineWidth' , 2 );
-plot( [ theta ; theta ] , ...
-    [ min( SPL ) ; max( SPL ) ] , 'Linewidth' , 2 , 'LineStyle' , '--' );
-axis( [ min( Th ) , max( Th ) , nf , 0 ] );
-legend( 'Beamformed response' , 'Actual DoA' , 'Estimated DoA' , ...
-    'Location' , 'southoutside' , 'Orientation','horizontal' )
+plot( Th , B , 'LineWidth' , 1 );
+for thn = 1:length( th )
+    plot( [ th( thn ) ; th( thn ) ] , ...
+        [ min( B ) ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
+end
+if est_DoA == true
+    plot( [ theta ; theta ] , ...
+        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+    plot( [ pi - theta ; pi - theta ] , ...
+        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+end
+axis( [ min( Th ) , max( Th ) , min( B ) , max( B ) ] );
 box on;
+hold off;
 
-figure; hold on;
-[ XX , YY ] = meshgrid( -ceil( dr ):2*ceil( dr )/sr:ceil( dr ) );
-contourf( XX , YY , real( plane_wave( a , k , XX , YY ) ) , ...
-    'LineColor' , 'none' );
-colormap sky;
-axis square;
-viscircles( [ X , Y ] , .1 , 'Color' , 'k' );
-line( [ -1 , 1 ] , [ -1 , 1 ].*tan( theta ) , 'LineWidth' , 2 , 'Color' , 'r' );
-box on;
+% Polar plot of Metrics and DoA estimation
+figure;
+ax = polaraxes; hold on;
+polarplot( Th , B , 'LineWidth' , 1);
+for thn = 1:length( th )
+    polarplot( [ th( thn ) ; th( thn ) ] , ...
+        [ 0 ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
+end
+if est_DoA == true
+    polarplot( [ theta ; theta ] , ...
+        [ 0 ; max( B ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+    polarplot( [ pi - theta ; pi - theta ] , ...
+        [ 0 ; max( B ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+end
+hold off;
