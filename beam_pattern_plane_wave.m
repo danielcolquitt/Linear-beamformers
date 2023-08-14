@@ -15,7 +15,7 @@ est_DoA = false;                        % Estimate DoA from max of metric
 
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
-a  = [ 1 , 1 , 1];                      % Vector of wave amplitudes [m]
+a  = [ 1 , .2 , .2];                      % Vector of wave amplitudes [m]
 f  = [ 0.02e6 , 0.02e6 , 0.02e6 ];      % Vector of frequencies [Hz]
 th = [ 30 , -20 , 60 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
@@ -70,49 +70,39 @@ end
 
 % Metric and DoA estimation
 figure; hold on;
-plot( Th , B , 'LineWidth' , 1 );
-for thn = 1:length( th )
-    plot( [ th( thn ) ; th( thn ) ] , ...
-        [ min( B ) ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
-end
-if est_DoA == true
-    plot( [ theta ; theta ] , ...
-        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
-    plot( [ pi - theta ; pi - theta ] , ...
-        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
-end
-axis( [ min( Th ) , max( Th ) , min( B ) , max( B ) ] );
-box on;
-hold off;
-
-% Metric and DoA estimation
-figure; hold on;
 plot( Th , SR , 'LineWidth' , 1 );
 for thn = 1:length( th )
     plot( [ th( thn ) ; th( thn ) ] , ...
         [ min( SR ) ; max( SR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
 end
+if est_DoA == true
+    plot( [ theta ; theta ] , ...
+        [ min( SR ) ; max( SR ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+    plot( [ pi - theta ; pi - theta ] , ...
+        [ min( SR ) ; max( SR ) ] , 'Linewidth' , 1 , ...
+        'Color' , '#EDB120' , 'LineStyle' , '--' );
+end
 axis( [ min( Th ) , max( Th ) , min( SR ) , max( SR ) ] );
 box on;
 hold off;
 
-% Polar plot of Metrics and DoA estimation
+% Polar plot of Metrics
+SNR = SR;
 figure;
 ax = polaraxes; hold on;
-polarplot( Th , B , 'LineWidth' , 1);
+polarplot( Th , SNR , 'LineWidth' , 1);
 for thn = 1:length( th )
     polarplot( [ th( thn ) ; th( thn ) ] , ...
-        [ min( B ) ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
+        [ min( SNR ) ; max( SNR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
 end
 if est_DoA == true
     polarplot( [ theta ; theta ] , ...
-        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
+        [ min( SNR ) ; max( SNR ) ] , 'Linewidth' , 1 , ...
         'Color' , '#EDB120' , 'LineStyle' , '--' );
     polarplot( [ pi - theta ; pi - theta ] , ...
-        [ min( B ) ; max( B ) ] , 'Linewidth' , 1 , ...
+        [ min( SNR ) ; max( SNR ) ] , 'Linewidth' , 1 , ...
         'Color' , '#EDB120' , 'LineStyle' , '--' );
 end
-rlim( [ min( B )  max( B ) ] )
+rlim( [ min( SNR )  max( SNR ) ] )
 hold off;
