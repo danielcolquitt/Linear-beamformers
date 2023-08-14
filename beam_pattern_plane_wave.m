@@ -16,7 +16,7 @@ est_DoA = false;                        % Estimate DoA from max of metric
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
 a  = [ 1 , 1 ];                   % Vector of wave amplitudes [m]
-f  = [ 0.03e6 , 0.01e6 ];      % Vector of frequencies [Hz]
+f  = [ 0.05e6 , 0.05e6 ];      % Vector of frequencies [Hz]
 th = [ -30 , 30 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
 
@@ -25,7 +25,7 @@ sample_r = 1e6;                         % Sampling rate
 sample_N = 1e4;                         % Sampling window
 noise_a  = 0.04;                        % Amplitude of AWGN
 N        = 8;                           % Number of sensors
-target_f = 0.03e6;                      % Target frequency
+target_f = 0.05e6;                      % Target frequency
 
 % Compute ancillary quantities
 target_l = c./target_f;                 % wavelength
@@ -56,8 +56,8 @@ fprintf( 'Number of bearing samples: %g\n' , length( Th ) );
 fprintf( 'Actual DoA: %g rad\n' , th);
 
 % Beamformer output
-%B = DAS_beamformer( S , 2.*pi./target_l , [ X ; Y ] , Th );
-B = MVDR_beamformer( S , target_f , c , [ X ; Y ] , Th );
+B = DAS_beamformer( S , target_f , c , [ X ; Y ] , Th );
+%B = MVDR_beamformer( S , target_f , c , [ X ; Y ] , Th );
 
 if est_DoA == true
     % Compute SPL and DoA
