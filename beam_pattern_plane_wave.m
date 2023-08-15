@@ -15,9 +15,9 @@ est_DoA = false;                        % Estimate DoA from max of metric
 
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
-a  = [ 1 , 1 , 1];                      % Vector of wave amplitudes [m]
-f  = [ 0.02e6 , 0.02e6 , 0.02e6 ];      % Vector of frequencies [Hz]
-th = [ 30 , -20 , 60 ]*pi/180;          % Vector of direction of
+a  = [ 1 , 1 , 1];                   % Vector of wave amplitudes [m]
+f  = [ 1e6 , 1e6 , 1e6 ];      % Vector of frequencies [Hz]
+th = [ -10 , 5 , 30 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
 
 % Array characteristics
@@ -25,9 +25,7 @@ sample_r = 1e6;                         % Sampling rate
 sample_N = 1e4;                         % Sampling window
 noise_a  = 0.04;                        % Amplitude of AWGN
 N        = 8;                           % Number of sensors
-target_f = 0.02e6;                      % Target frequency
-steering = th( 1 );                           % Steered bearing - set to zero
-                                        % for no steering
+target_f = 1e6;                      % Target frequency
 
 % Compute ancillary quantities
 target_l = c./target_f;                 % wavelength
@@ -58,10 +56,8 @@ fprintf( 'Number of bearing samples: %g\n' , length( Th ) );
 fprintf( 'Actual DoA: %g rad\n' , th);
 
 % Beamformer output
-%[ B , SR ] = DAS_beamformer( S , target_f , c , ...
-%    [ X ; Y ] , Th , steering) ;
-[ B , SR ] = MVDR_beamformer( S , target_f , c , ...
-    [ X ; Y ] , Th , steering );
+B = DAS_beamformer( S , target_f , c , [ X ; Y ] , Th );
+%B = MVDR_beamformer( S , target_f , c , [ X ; Y ] , Th );
 
 if est_DoA == true
     % Compute SPL and DoA
@@ -84,17 +80,6 @@ if est_DoA == true
         'Color' , '#EDB120' , 'LineStyle' , '--' );
 end
 axis( [ min( Th ) , max( Th ) , min( B ) , max( B ) ] );
-box on;
-hold off;
-
-% Metric and DoA estimation
-figure; hold on;
-plot( Th , SR , 'LineWidth' , 1 );
-for thn = 1:length( th )
-    plot( [ th( thn ) ; th( thn ) ] , ...
-        [ min( SR ) ; max( SR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
-end
-axis( [ min( Th ) , max( Th ) , min( SR ) , max( SR ) ] );
 box on;
 hold off;
 
