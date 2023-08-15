@@ -2,7 +2,7 @@
  
 A collection of MATLAB scripts and functions to simulate simple linear acoustic beamformers.
 
-## beam_pattern_wave.m
+## beamform_plan_wave.m
 
 The top-level script to run and specify the properties of the sources and beamformers.
 

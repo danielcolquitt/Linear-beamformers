@@ -25,12 +25,11 @@ for thn = 1:length( th )
     % Compute scanning vector (as column vector)
     V = exp( 1i.*( k*[ cos( th( thn ) ) , sin( th( thn ) ) ]*Z ) ).';
     % Beamform
-    B( thn ) = abs( V'*R*V );
+    %B( thn ) = abs( V'*R*V );
+    B( thn ) = mean( abs( V'*S ).^2 );
     SR( thn ) = real( E'*V );
 end
 
-
-B = 10*log10( B./max( B ) );
-
+B = 10*log10( B/max( B ) );
 
 end

@@ -11,7 +11,8 @@ function [ M , SR ] = MVDR_beamformer( S , f , c , Z , th , sth )
 k = 2*pi.*f./c;
 
 % Estimate covariance matrix and its inverse
-R = S*S'/length( S );
+R = S*S'/size( S , 2 );
+abs( det( R ) )
 Rinv = pinv( R );
 
 % Calculate steering vector (as column vector)
@@ -31,6 +32,6 @@ for thn = 1:length( th )
     SR( thn ) = real( W'*V );
 end
 
-M = 10*log10( M./max( M ) );
+M = 10*log10( M/max( M ) );
 
 end

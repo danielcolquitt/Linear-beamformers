@@ -1,14 +1,12 @@
 clear
 
 % Visualisation parameters
-nf = -30;                               % Noise floor
-                                        % (range of beam pattern response)
 ar = 1e3;                               % Scanning angle resolution
                                         % (AFFECTS DoA estimation)
 
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
-a  = [ 1 , 1 , .1];                      % Vector of wave amplitudes [m]
+a  = [ 0.1 , 1 , 0.1];                  % Vector of wave amplitudes [m]
 f  = [ 0.01e6 , 0.02e6 , 0.03e6 ];      % Vector of frequencies [Hz]
 th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
@@ -51,19 +49,19 @@ fprintf( 'Number of bearing samples: %g\n' , length( Th ) );
 fprintf( 'Actual DoA: %g rad\n' , th);
 
 % Beamformer output
-%[ B , SR ] = DAS_beamformer( S , target_f , c , ...
+% [ B , SR ] = DAS_beamformer( S , target_f , c , ...
 %    [ X ; Y ] , Th , steering) ;
 [ B , SR ] = MVDR_beamformer( S , target_f , c , ...
     [ X ; Y ] , Th , steering );
 
-% Metric and DoA estimation
+% Metric
 figure; hold on;
-plot( Th , SR , 'LineWidth' , 1 );
+plot( Th , B , 'LineWidth' , 1 );
 for thn = 1:length( th )
     plot( [ th( thn ) ; th( thn ) ] , ...
-        [ min( SR ) ; max( SR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
+        [ min( B ) ; max( B ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
 end
-axis( [ min( Th ) , max( Th ) , min( SR ) , max( SR ) ] );
+axis( [ min( Th ) , max( Th ) , min( B ) , max( B ) ] );
 box on;
 hold off;
 

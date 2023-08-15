@@ -11,6 +11,8 @@ function P = plane_wave( a , th , f , c  , X , Y , t )
 % Compute wave vector
 k = 2.*pi.*f./c.*[ cos( th ) , sin( th ) ];
 
-P = a.*exp( 1i.*( k(1)*X + k(2)* Y) ).'*exp( -1i.*2.*pi.*f.*t );
+P = a.*exp( 1i.*( k(1)*X + k(2)*Y ) ).'*exp( -1i.*2.*pi.*f.*t );
+
+size( P )
 
 end
