@@ -24,8 +24,8 @@ Noi = sqrt(0.1)*randn( N , sn );
 % Total signal at receivers
 RS = A.'*Sig + Noi;
 
-% Estimate covariance matrix
-R = RS*RS'/length( Sig );
+% Estimate correlation matrix
+R = RS*RS';
 
 % Define scanning angles
 Th = (-pi/2:pi/300:pi/2).';
