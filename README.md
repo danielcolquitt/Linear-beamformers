@@ -24,5 +24,4 @@ Estimates the DoA based on the maximum field value. Does not work well for multi
 
 ## To do
 
-- Figure out best way to show steered response (probably power)
 - Incorporate temporal noise
