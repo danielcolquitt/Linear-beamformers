@@ -1,6 +1,6 @@
 function [ B , SR ] = DAS_beamformer( S , f  , c , Z , th , sth )
 %DAS_beamformer DAS beamformer (unweighted)
-%Outputs [ Power spectrum , Steered response ]
+%Outputs [ Matric , Steered response ]
 %   S   - A vector of signals recevied at the hydrophones located at Z
 %   k   - Target frequency
 %   c   - wavespeed

@@ -8,7 +8,6 @@ function P = plane_wave( a , th , f , c  , X , Y , t )
 %   Y  - y-coordinate
 %   t  - time
 
-
 % Compute wave vector
 k = 2.*pi.*f./c.*[ cos( th ) , sin( th ) ];
 

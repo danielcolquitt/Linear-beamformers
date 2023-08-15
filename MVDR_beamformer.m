@@ -1,6 +1,6 @@
 function [ M , SR ] = MVDR_beamformer( S , f , c , Z , th , sth )
 %MVDR_beamformer MVDR beamformer with adaptive weights.
-%Outputs [ Power spectrum , Steered response ]
+%Outputs [ Mtric , Steered response ]
 %   S  - A vector of signals recevied at the hydrophones located at Z
 %   f  - Target frequency
 %   c  - Local wavespeed

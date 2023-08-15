@@ -3,21 +3,14 @@ clear
 % Visualisation parameters
 nf = -30;                               % Noise floor
                                         % (range of beam pattern response)
-dr = 20;                                % Spatial domain to plot
-                                        % (no effect on computation)
-sr = 1e3;                               % Spatial resolution for plotting
-                                        % (no effect on computation)
 ar = 1e3;                               % Scanning angle resolution
                                         % (AFFECTS DoA estimation)
-est_DoA = false;                        % Estimate DoA from max of metric
-                                        % N.B. Does not work well for
-                                        % multiple sources
 
 % Plane wave source characteristics
 c  = 0.02e6;                            % speed of sound [m/s]
-a  = [ 1 , .2 , .2];                      % Vector of wave amplitudes [m]
-f  = [ 0.02e6 , 0.02e6 , 0.02e6 ];      % Vector of frequencies [Hz]
-th = [ 30 , -20 , 60 ]*pi/180;          % Vector of direction of
+a  = [ 1 , 1 , .1];                      % Vector of wave amplitudes [m]
+f  = [ 0.01e6 , 0.02e6 , 0.03e6 ];      % Vector of frequencies [Hz]
+th = [ 20 , 25 , -40 ]*pi/180;          % Vector of direction of
                                         % arrivals [rad]
 
 % Array characteristics
@@ -26,7 +19,7 @@ sample_N = 1e4;                         % Sampling window
 noise_a  = 0.04;                        % Amplitude of AWGN
 N        = 8;                           % Number of sensors
 target_f = 0.02e6;                      % Target frequency
-steering = th( 1 );                           % Steered bearing - set to zero
+steering = 0;                           % Steered bearing - set to zero
                                         % for no steering
 
 % Compute ancillary quantities
@@ -63,11 +56,6 @@ fprintf( 'Actual DoA: %g rad\n' , th);
 [ B , SR ] = MVDR_beamformer( S , target_f , c , ...
     [ X ; Y ] , Th , steering );
 
-if est_DoA == true
-    % Compute SPL and DoA
-    theta = DoA( B , Th );
-end
-
 % Metric and DoA estimation
 figure; hold on;
 plot( Th , SR , 'LineWidth' , 1 );
@@ -75,34 +63,18 @@ for thn = 1:length( th )
     plot( [ th( thn ) ; th( thn ) ] , ...
         [ min( SR ) ; max( SR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
 end
-if est_DoA == true
-    plot( [ theta ; theta ] , ...
-        [ min( SR ) ; max( SR ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
-    plot( [ pi - theta ; pi - theta ] , ...
-        [ min( SR ) ; max( SR ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
-end
 axis( [ min( Th ) , max( Th ) , min( SR ) , max( SR ) ] );
 box on;
 hold off;
 
 % Polar plot of Metrics
-SNR = SR;
+SNR = B;
 figure;
 ax = polaraxes; hold on;
 polarplot( Th , SNR , 'LineWidth' , 1);
 for thn = 1:length( th )
     polarplot( [ th( thn ) ; th( thn ) ] , ...
         [ min( SNR ) ; max( SNR ) ] , 'Color' , '#D95319' , 'LineWidth' , 1 );
-end
-if est_DoA == true
-    polarplot( [ theta ; theta ] , ...
-        [ min( SNR ) ; max( SNR ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
-    polarplot( [ pi - theta ; pi - theta ] , ...
-        [ min( SNR ) ; max( SNR ) ] , 'Linewidth' , 1 , ...
-        'Color' , '#EDB120' , 'LineStyle' , '--' );
 end
 rlim( [ min( SNR )  max( SNR ) ] )
 hold off;

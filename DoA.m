@@ -6,7 +6,7 @@ function theta = DoA( B , Th )
 % Find the largest beamformed responses
 [ ~ , Id ] = max( abs( B ) );
 
-% Use the largest value to estimate the DoA
+% Use the largest value of input to estimate the DoA
 theta = Th( Id );
 
 fprintf( 'Estimated DoA: %g rad or %g rad\n' , theta , pi - theta );
