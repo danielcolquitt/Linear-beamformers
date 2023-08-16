@@ -75,9 +75,9 @@ Relevant Theory can be found in  Van Trees, H. *Optimum Array Processing*. New Y
 ## To do
 - [x] Test time-harmonic source
 - [x] Stress-test code for multiple uncorrelated signals
-- [X] Implement spatial smoothing for multiple correlated signals
-- [] Implement beam steering
-- [] Stress-test code for extreme parameter values
+- [x] Implement spatial smoothing for multiple correlated signals
+- [ ] Implement beam steering
+- [ ] Stress-test code for extreme parameter values
 
 
 [^1]: I have change from using Delay-And-Sum to Bartlett when referring to this type of beamerformer because I am a massive fan of [The West Wing](https://en.wikipedia.org/wiki/Jed_Bartlet).
