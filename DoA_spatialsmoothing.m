@@ -1,13 +1,17 @@
 % A simple script to estimate DoA of a temporally random plane wave.
 % The script incorporates uncorrelated AWGN sensor noise. Bartlett and
-% Capon beamformers are compared.
+% Capon beamformers are compared. Uses spatial smoothing for multiple
+% sources.
 
 clear
 
-d  = 1/2;                % Element spacing (normalised by wavelength)
-N  = 8;                  % Number of receivers
-th = 40*pi/180;          % DoA for signal [ rad ]
-sn = 2^12;               % Signal sample size
+d   = 1/2;                % Element spacing (normalised by wavelength)
+N   = 8;                  % Number of receivers
+th  = [ 40*pi/180;        % DoA for signal [ rad ]
+        10*pi/180;
+        -20*pi/180];
+sn  = 2^12;               % Signal sample size
+SAL = 7;                  % Sub-array size for spatial smoothing
 
 % Create array
 [ X , Y ] = linear_array( d , N );
@@ -22,16 +26,19 @@ Sig = randn( 1 , sn );
 Noi = sqrt(0.1)*randn( N , sn );
 
 % Total signal at receivers
-RS = A.'*Sig + Noi;
+RS = (A( 1 , :) + A( 2 , :) + A( 3 , :) ).'*Sig + Noi;
 
-% Estimate covariance matrix
-R = RS*RS'/length( Sig );
+% Estimate covariance matrix using spatial smoothing
+R = FBSS( RS , SAL );
 
 % Define scanning angles
 Th = (-pi/2:pi/300:pi/2).';
 
+% Create smoothed array
+[ Xs , Ys ] = linear_array( d , SAL );
+
 % Compute scanning vectors
-V = UARV( X , Y ,  Th );
+V = UARV( Xs , Ys ,  Th );
 
 % Estimate DoA using Bartlett
 B = Bartlett_DOA( R , V );

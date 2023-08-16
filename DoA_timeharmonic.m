@@ -5,7 +5,7 @@
 clear
 
 d  = 1/2;                % Element spacing (normalised by wavelength)
-N  = 8;                  % Number of receivers
+N  = 4;                  % Number of receivers
 th = 40*pi/180;          % DoA for signal [ rad ]
 sn = 2^12;               % Signal sample size
 
@@ -15,8 +15,8 @@ sn = 2^12;               % Signal sample size
 % Compute array response vectors
 A = UARV( X , Y , th );
 
-% Create source signal (random gaussian)
-Sig = randn( 1 , sn );
+% Create test signal (random gaussian)
+Sig = exp( 1i.*2.*pi.*(0:(sn-1))/1e3 );
 
 % Add some uncorrelated noise
 Noi = sqrt(0.1)*randn( N , sn );
