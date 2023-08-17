@@ -15,10 +15,10 @@ sn = 2^12;               % Signal sample size
 % Compute array response vectors
 A = UARV( X , Y , th );
 
-% Create test signal (random gaussian)
+% Create test signal (time-harmonic tone)
 Sig = exp( 1i.*2.*pi.*(0:(sn-1))/1e3 );
 
-% Add some uncorrelated noise
+% Add some uncorrelated sensor noise
 Noi = sqrt(0.1)*randn( N , sn );
 
 % Total signal at receivers

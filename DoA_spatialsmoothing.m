@@ -22,7 +22,7 @@ A = UARV( X , Y , th );
 % Create source signal (random gaussian)
 Sig = randn( 1 , sn );
 
-% Add some uncorrelated noise
+% Add some uncorrelated sensor noise
 Noi = sqrt(0.1)*randn( N , sn );
 
 % Total signal at receivers
