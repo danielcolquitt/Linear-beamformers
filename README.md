@@ -27,6 +27,12 @@ In this case, the estimator is the maximal SNR/metric
 $$M = \frac{1}{\mathbf{V}^\mathrm{H}(\theta)\underline{\underline{R}}^+\mathbf{V}(\theta)},$$
 where $(\cdot)^+$ indicates the Moore---Penrose Pseudoinverse.
 
+### ESPRIT_DOA.m
+
+Implements the ESPRIT (Estimation of signal parameters via rotational invariance techniques) algorithm for bearing estimation. Retruns value of estimated bearing.
+In this case, the bearing is estimated by a singular value decompostition of the convariance matrix, then extract the signal subspace.
+The array is then divided into subarrays (trucated signal subspaces), the Eigenvalues of the rotation matrix connecting the subarrarys can then be used to find the radial frequency.
+
 ### plot_DOA.m
 
 Simply compute the SPL of the beamformer outputs and plots it as a function of scanning angle, $\theta$.
