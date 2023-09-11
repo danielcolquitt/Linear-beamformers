@@ -39,6 +39,9 @@ B = Bartlett_DOA( R , V );
 % Estimate DoA using Capon
 C = Capon_DOA( R , V );
 
+% Estimate DoA using ESPRIT
+E = ESPRIT_DOA(R, V, N, th, d)
+
 % Plot it
 figure;
 ax = axes(); hold on;
@@ -102,6 +105,9 @@ B = Bartlett_DOA( R , V );
 
 % Estimate DoA using Capon
 C = Capon_DOA( R , V );
+
+% Estimate DoA using ESPRIT
+E = ESPRIT_DOA(R, V, SAL, th, d)
 
 % Plot it
 figure;
