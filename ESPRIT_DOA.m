@@ -25,8 +25,8 @@ F = U(:, 1:length(th)) ;
 E1 = F(1:N-1,:) ;
 E2 = F(2:N, :) ;
 
-% Compute P (Rotation Matrix) via LS (Least Squares) 
-P = E1\E2 ;
+% Compute P (Rotation Matrix) from E2 = E1*P
+P = mldivide(E1,E2);
 
 % Use argument of eigenvalues of P to find DOA (Deg)
 E = asind(-(angle(eig(P)) / (2*pi*d))) ;
