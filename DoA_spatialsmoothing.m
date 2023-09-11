@@ -46,6 +46,9 @@ B = Bartlett_DOA( R , V );
 % Estimate DoA using Capon
 C = Capon_DOA( R , V );
 
+% Estimate DoA using ESPRIT
+E = ESPRIT_DOA(R, V, SAL, th, d)
+
 % Plot it
 ax = axes(); hold on;
 plot_DOA( Th , B , ax )
